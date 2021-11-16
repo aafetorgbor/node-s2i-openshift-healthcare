@@ -13,7 +13,7 @@ logger.debug("launching Example health endpoint");
 
 /* end of dependency setup */
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 9000;
 
 var app = express();
 
