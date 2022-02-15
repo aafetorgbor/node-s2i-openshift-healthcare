@@ -9,7 +9,7 @@ pipeline{
     }
     
     stages{
-        stage('Checkout source code'){
+        stage('Checking out source code'){
             steps{
                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/aafetorgbor/node-s2i-openshift-healthcare.git']]])
             }
@@ -19,7 +19,7 @@ pipeline{
         
  
         
-        stage('SonarQube Analysis'){
+        stage('SonarQube Analysis Check'){
             steps{
                 
                script {
@@ -33,7 +33,7 @@ pipeline{
         }
         
         
-        stage("Quality Gate") {
+        stage("Quality Gate Validation") {
             steps {
                 timeout(time: 1, unit: 'MINUTES') {
                   waitForQualityGate abortPipeline: true
