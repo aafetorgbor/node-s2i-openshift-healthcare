@@ -11,8 +11,7 @@ pipeline{
     stages{
         stage('Checkout source code'){
             steps{
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-keys', url: 'https://github.com/aafetorgbor/node-s2i-openshift-healthcare
-.git']]])
+               checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/aafetorgbor/node-s2i-openshift-healthcare.git']]])
             }
         }
         
