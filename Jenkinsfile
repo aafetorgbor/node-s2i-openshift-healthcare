@@ -1,22 +1,52 @@
-node {
-  stage('Checkout Source Code') {
-    checkout scm
-  }
-  stage('Run SonarQube Analysis') {
-    def scannerHome = tool 'SonarQubeScanner';
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
+pipeline{
+    
+    agent any
+    
+    environment{
+        
+        scannerhome = tool 'SonarQubeScanner'
+        
     }
-  }
-  
-  // No need to occupy a node, guality gate check
-stage("Quality Gate"){
-  timeout(time: 1, unit: 'HOURS') { // Just in case something goes wrong, pipeline will be killed after a timeout
-    def qg = waitForQualityGate() // Reuse taskId previously collected by withSonarQubeEnv
-    if (qg.status != 'OK') {
-      error "Pipeline aborted due to quality gate failure: ${qg.status}"
+    
+    stages{
+        stage('Checkout source code'){
+            steps{
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-keys', url: 'https://github.com/aafetorgbor/node-s2i-openshift-healthcare
+.git']]])
+            }
+        }
+        
+       
+        
+ 
+        
+        stage('SonarQube Analysis'){
+            steps{
+                
+               script {
+                  // SonaQube server name from jenkins and sonarqube project name
+                   withSonarQubeEnv('sonarqube') {
+                     sh "$scannerhome/bin/sonar-scanner -Dsonar.projectKey=advanced -Dsonar.projectName=advanced"
+                   }
+               }
+            }
+           
+        }
+        
+        
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'MINUTES') {
+                  waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+        
+        
+        
+        
+        
+          
     }
-  }
-}
-  
+    
 }
